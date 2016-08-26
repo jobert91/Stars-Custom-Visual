@@ -1,0 +1,8 @@
+{
+  "name": "visual",
+  "dependencies": {},
+  "globalDependencies": {
+    "d3": "registry:dt/d3#0.0.0+20160727131401",
+    "lodash": "registry:dt/lodash#4.14.0+20160802150749"
+  }
+}

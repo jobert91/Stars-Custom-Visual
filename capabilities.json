@@ -1,0 +1,50 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Value",
+            "name": "value",
+            "kind": 1
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                { "value": { "min": 1, "max": 1 } }
+            ],
+            "single": {
+                "role": "value"
+            }
+        }
+    ],
+    "objects": {
+        "general": {
+            "displayName": "Star Properties",
+            "properties": {
+                "numStars": {
+                    "displayName": "Number of Stars",
+                    "type": { "numeric": true }
+                },
+                "showLabel": {
+                    "displayName": "Show Label",
+                    "type": { "bool": true }
+                },
+                "showStroke": {
+                    "displayName": "Show Stroke",
+                    "type": { "bool": true }
+                },
+                "starStroke": {
+                    "displayName": "Star Stroke",
+                    "type": { "fill": { "solid": { "color": true } } }
+                },
+                "starFill": {
+                    "displayName": "Star Fill",
+                    "type": { "fill": { "solid": { "color": true } } }
+                },
+                "emptyStarFill": {
+                    "displayName": "Empty Star Fill",
+                    "type": { "fill": { "solid": { "color": true } } }
+                }
+            }
+        }
+    }
+}
