@@ -44,6 +44,7 @@ module powerbi.extensibility.visual {
         private static internalViewBoxStarHeight = 80.32;
         private static starMarginRight = 4;
         private static starPolygonPoints = "42.23 2.31 54.4 27.64 82.26 31.39 61.93 50.8 66.97 78.45 42.23 65.12 17.49 78.45 22.53 50.8 2.19 31.39 30.05 27.64 42.23 2.31";
+        private static dollarSignPathPoints = "M42.3,66.7v8.9h-5.1V67c-6.1,0-11-1.2-14.9-3.5v-9.2c1.7,1.5,3.9,2.7,6.8,3.7c2.9,1,5.6,1.5,8,1.5V41.1   c-6.5-3-10.7-5.8-12.6-8.3c-1.9-2.5-2.9-5.5-2.9-9c0-4.1,1.5-7.6,4.4-10.6c2.9-3,6.6-4.8,11.1-5.4V0.5h5.1v7.2   c5.8,0.2,9.7,0.9,11.9,2.3v8.8c-3-2.2-7-3.4-11.9-3.5v19c6,2.8,10.2,5.5,12.4,8.2c2.2,2.6,3.3,5.6,3.3,8.9c0,4-1.4,7.4-4.2,10.1   C51.1,64.2,47.2,66,42.3,66.7z M37.2,32V15.5c-2.1,0.4-3.7,1.3-4.9,2.6c-1.2,1.3-1.8,3-1.8,4.9c0,2,0.5,3.7,1.5,5   C33,29.3,34.7,30.6,37.2,32z M42.3,43.4v15.9c4.7-1,7-3.4,7-7.3C49.3,48.7,47,45.8,42.3,43.4z";
 
         private static defaultValues = {
             value: 0,
@@ -86,11 +87,18 @@ module powerbi.extensibility.visual {
 
             fill = strokeOnly ? "none" : fill;
 
-            svg.append("polygon")
+            // svg.append("polygon")
+            //     .attr("stroke", this.data.starStroke)
+            //     .attr("stroke-width", strokeWidth)
+            //     .attr("fill", fill)
+            //     .attr("points", Stars.starPolygonPoints)
+            //     .attr("transform", "translate(" + translateX + ")");
+
+            svg.append("path")
                 .attr("stroke", this.data.starStroke)
                 .attr("stroke-width", strokeWidth)
                 .attr("fill", fill)
-                .attr("points", Stars.starPolygonPoints)
+                .attr("d", Stars.dollarSignPathPoints)
                 .attr("transform", "translate(" + translateX + ")");
         }
 
@@ -115,10 +123,17 @@ module powerbi.extensibility.visual {
                 .attr("width", this.options.viewport.width)
                 .attr("height", this.options.viewport.height);
 
-            svg.append("defs").append("svg:clipPath")
-                .attr("id", "starClipPath")
-                .append("polygon")
-                .attr("points", Stars.starPolygonPoints);
+            let defs = svg.append("defs");
+
+                defs.append("svg:clipPath")
+                    .attr("id", "starClipPath")
+                    .append("polygon")
+                        .attr("points", Stars.starPolygonPoints);
+
+                defs.append("svg:clipPath")
+                    .attr("id", "dollarSignClipPath")
+                    .append("path")
+                        .attr("d", Stars.dollarSignPathPoints);
 
             if (this.data.showLabel) {
                 this.addLabel(svg);
@@ -146,7 +161,7 @@ module powerbi.extensibility.visual {
                     // the rectangle is placed in a group that has a clipping mask to the shape of the star
                     // we then add an empty star on top of that so that the star stroke can still be seen 
                     let partialStarGroup = svg.append("g")
-                        .attr("clip-path", "url(" + window.location.href + "#starClipPath)")
+                        .attr("clip-path", "url(" + window.location.href + "#dollarSignClipPath)")
                         .attr("transform", "translate(" + this.getTranslateXFromIndex(i) + ")");
 
                     // add base star to clipping path group to insure that it doesn"t show from underneath the rect
