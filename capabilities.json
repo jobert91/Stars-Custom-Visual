@@ -4,22 +4,49 @@
             "displayName": "Value",
             "name": "value",
             "kind": 1
+        },
+        {
+            "displayName": "Target value",
+            "name": "target",
+            "kind": 1
         }
     ],
     "dataViewMappings": [
         {
             "conditions": [
-                { "value": { "min": 1, "max": 1 } }
+                { "value":  { "min": 1, "max": 1 } },
+                { "target": { "max": 1 } }
             ],
-            "single": {
-                "role": "value"
+            "categorical": {
+                "values": {
+                    "select":[
+                        { "bind": { "to": "value" } },
+                        { "bind": { "to": "target" } }
+                    ]
+                }
             }
         }
     ],
     "objects": {
-        "general": {
+        "starproperties": {
             "displayName": "Star Properties",
             "properties": {
+                "symbol": {
+                    "displayName": "Symbol",
+                    "type": { 
+                        "enumeration": {
+                            "members": [ 
+                                { "value": "star", "displayName": "Star" }, 
+                                { "value": "heart", "displayName": "Heart" }, 
+                                { "value": "thumbsup", "displayName": "Thumbs Up" }, 
+                                { "value": "smiley", "displayName": "Smiley" }, 
+                                { "value": "dollarsign", "displayName": "Dollar Sign" }, 
+                                { "value": "calendar", "displayName": "Calendar" }, 
+                                { "value": "accessibility", "displayName": "Accessibility" } 
+                            ]
+                        }
+                    }
+                },
                 "numStars": {
                     "displayName": "Number of Stars",
                     "type": { "numeric": true }

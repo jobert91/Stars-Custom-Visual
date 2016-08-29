@@ -36,17 +36,37 @@ module powerbi.extensibility.visual {
         valueAsPercent: boolean;
         valueWithSymbol: boolean;
         valueSymbol: string;
+        visualSymbol: string;
+        target: number;
     };
 
     export class Stars implements IVisual {
 
-        private static internalViewBoxStarWidth = 84.46; // 4 is the padding
-        private static internalViewBoxStarHeight = 80.32;
+        // star properties
+        private static internalStarWidth = 84.46;
         private static starMarginRight = 4;
         private static starPolygonPoints = "42.23 2.31 54.4 27.64 82.26 31.39 61.93 50.8 66.97 78.45 42.23 65.12 17.49 78.45 22.53 50.8 2.19 31.39 30.05 27.64 42.23 2.31";
-        private static dollarSignPathPoints = "M42.3,66.7v8.9h-5.1V67c-6.1,0-11-1.2-14.9-3.5v-9.2c1.7,1.5,3.9,2.7,6.8,3.7c2.9,1,5.6,1.5,8,1.5V41.1   c-6.5-3-10.7-5.8-12.6-8.3c-1.9-2.5-2.9-5.5-2.9-9c0-4.1,1.5-7.6,4.4-10.6c2.9-3,6.6-4.8,11.1-5.4V0.5h5.1v7.2   c5.8,0.2,9.7,0.9,11.9,2.3v8.8c-3-2.2-7-3.4-11.9-3.5v19c6,2.8,10.2,5.5,12.4,8.2c2.2,2.6,3.3,5.6,3.3,8.9c0,4-1.4,7.4-4.2,10.1   C51.1,64.2,47.2,66,42.3,66.7z M37.2,32V15.5c-2.1,0.4-3.7,1.3-4.9,2.6c-1.2,1.3-1.8,3-1.8,4.9c0,2,0.5,3.7,1.5,5   C33,29.3,34.7,30.6,37.2,32z M42.3,43.4v15.9c4.7-1,7-3.4,7-7.3C49.3,48.7,47,45.8,42.3,43.4z";
+
+        // dollar sign properties
+        private static internalDollarSignWidth = 39.79;
+        private static dollarSignMarginRight = 10;
+        private static dollarSignPathPoints = "M22.4,70v9.3h-5.3v-9c-6.4,0-11.5-1.2-15.5-3.7v-9.6c1.7,1.5,4.1,2.8,7.1,3.8c3,1,5.8,1.5,8.4,1.5V43.4 C10.3,40.2,6,37.4,4,34.7S1,29,1,25.4c0-4.3,1.5-7.9,4.5-11c3-3.1,6.9-5,11.5-5.6V1h5.3v7.6c6,0.2,10.2,1,12.4,2.4v9.2 c-3.1-2.3-7.3-3.5-12.4-3.7v19.8c6.3,2.9,10.6,5.8,12.9,8.5c2.3,2.7,3.5,5.9,3.5,9.3c0,4.2-1.4,7.7-4.3,10.6 C31.5,67.4,27.5,69.2,22.4,70z M17.1,33.8V16.7C15,17.1,13.3,18,12,19.4c-1.3,1.4-1.9,3.1-1.9,5.1c0,2.1,0.5,3.8,1.5,5.2 C12.7,31.1,14.5,32.4,17.1,33.8z M22.4,45.7v16.5c4.9-1,7.3-3.6,7.3-7.6C29.7,51.2,27.2,48.2,22.4,45.7z";
+
+        // heart properties
+        private static internalHeartWidth = 92.46;
+        private static heartMarginRight = 18;
+        private static heartPathPoints = "M84.7,7.8c-9-9-23.7-9-32.7,0l-5.8,5.8l-5.8-5.8c-9-9-23.7-9-32.7,0s-9,23.7,0,32.7l5.8,5.8l32.7,32.7L79,46.2 l5.8-5.8C93.7,31.5,93.7,16.8,84.7,7.8z";
+
+         // thumbs up properties
+        private static internalThumbsupWidth = 92.6;
+        private static thumbsupMarginRight = 18;
+        private static thumbsupPathPoints = "M28,33.6v44.3c0,1.2-1,1.5-2.5,1.5H2.9c-1.2,0-1.9-0.2-1.9-1.5V33.6c0-1.2,0.6-4.2,1.9-4.2h22.6 C26.8,29.4,28,32.4,28,33.6z M86.2,25.3H73.8H61.3l-0.1-0.1l-0.1-0.1c0,0,1.1-1.3,1.6-4.1s0.3-7-2.4-12.8c-2.7-5.8-6.3-7.4-9.4-7.2 s-5.6,2.2-6.2,3.7C44.1,6.2,44,9.2,44,11.9c0,2.7,0.1,5,0.1,5l-5,8.9l-5,8.9l-2.4,0.9l-2.4,0.9v16.4v16.4c0,0,2.4,1.4,5.4,2.8 c3,1.4,6.6,2.8,9,2.8h1.1h1.1h11.8h11.8h1.8h1.8c0.7,0,2.5,0,4.4-0.6c1.9-0.6,3.8-1.7,4.7-4c0.9-2.3,3.2-10.8,5.3-18.8 c2.1-7.9,3.9-15.3,3.9-15.3c0.3-1.5-0.2-4.3-1.2-6.7C89.2,27.4,87.8,25.3,86.2,25.3z";
+
+        private static internalSymbolHeight = 80.32;
 
         private static defaultValues = {
+            visualSymbol: "star",
+            target: undefined,
             value: 0,
             numStars: 5,
             showLabel: true,
@@ -62,12 +82,13 @@ module powerbi.extensibility.visual {
         };
 
         private static properties = {
-            numStars: { objectName: "general", propertyName: "numStars" },
-            showLabel: { objectName: "general", propertyName: "showLabel" },
-            showStroke: { objectName: "general", propertyName: "showStroke" },
-            starStroke: { objectName: "general", propertyName: "starStroke" },
-            starFill: { objectName: "general", propertyName: "starFill" },
-            emptyStarFill: { objectName: "general", propertyName: "emptyStarFill" }
+            visualSymbol:     { objectName: "starproperties", propertyName: "symbol" },
+            numStars:         { objectName: "starproperties", propertyName: "numStars" },
+            showLabel:        { objectName: "starproperties", propertyName: "showLabel" },
+            showStroke:       { objectName: "starproperties", propertyName: "showStroke" },
+            starStroke:       { objectName: "starproperties", propertyName: "starStroke" },
+            starFill:         { objectName: "starproperties", propertyName: "starFill" },
+            emptyStarFill:    { objectName: "starproperties", propertyName: "emptyStarFill" }
         };
 
         private element: JQuery;
@@ -75,9 +96,45 @@ module powerbi.extensibility.visual {
         private data: StarsData;
         private options: VisualUpdateOptions;
         private labelWidth: number;
+        private currentSymbolWidth: number;
+        private currentSymbolMarginRight: number;
+        private currentClipPath: string;
 
         private getTranslateXFromIndex(index: number): number {
-            return (index * (Stars.internalViewBoxStarWidth + Stars.starMarginRight)) + this.labelWidth;
+            return (index * (this.currentSymbolWidth + this.currentSymbolMarginRight)) + this.labelWidth;
+        }
+
+        private setSymbolProps(symbol: string): void {
+            switch (symbol) {
+                case "star":
+                    this.currentSymbolWidth = Stars.internalStarWidth;
+                    this.currentSymbolMarginRight = Stars.starMarginRight;
+                    this.currentClipPath = "#starClipPath";
+                    break;
+
+                case "dollarsign":
+                    this.currentSymbolWidth = Stars.internalDollarSignWidth;
+                    this.currentSymbolMarginRight = Stars.dollarSignMarginRight;
+                    this.currentClipPath = "#dollarSignClipPath";
+                    break;
+
+                case "heart":
+                    this.currentSymbolWidth = Stars.internalHeartWidth;
+                    this.currentSymbolMarginRight = Stars.heartMarginRight;
+                    this.currentClipPath = "#heartClipPath";
+                    break;
+
+                case "thumbsup":
+                    this.currentSymbolWidth = Stars.internalThumbsupWidth;
+                    this.currentSymbolMarginRight = Stars.thumbsupMarginRight;
+                    this.currentClipPath = "#thumbsUpClipPath";
+                    break;
+
+                default:
+                    this.currentSymbolWidth = Stars.internalStarWidth;
+                    this.currentSymbolMarginRight = Stars.starMarginRight;
+                    this.currentClipPath = "#starClipPath";
+            }
         }
 
         private addStar(percentFull: number, index: number, svg: d3.Selection<SVGElement>, strokeOnly?: boolean, translateXOveride?: number): void {
@@ -87,12 +144,20 @@ module powerbi.extensibility.visual {
 
             fill = strokeOnly ? "none" : fill;
 
-            // svg.append("polygon")
-            //     .attr("stroke", this.data.starStroke)
-            //     .attr("stroke-width", strokeWidth)
-            //     .attr("fill", fill)
-            //     .attr("points", Stars.starPolygonPoints)
-            //     .attr("transform", "translate(" + translateX + ")");
+            svg.append("polygon")
+                .attr("stroke", this.data.starStroke)
+                .attr("stroke-width", strokeWidth)
+                .attr("fill", fill)
+                .attr("points", Stars.starPolygonPoints)
+                .attr("transform", "translate(" + translateX + ")");
+        }
+
+        private addDollarSign(percentFull: number, index: number, svg: d3.Selection<SVGElement>, strokeOnly?: boolean, translateXOveride?: number): void {
+            let fill = percentFull === 0 ? this.data.emptyStarFill : this.data.starFill,
+                strokeWidth = this.data.showStroke ? 2 : 0,
+                translateX = translateXOveride !== undefined ? 0 : this.getTranslateXFromIndex(index);
+
+            fill = strokeOnly ? "none" : fill;
 
             svg.append("path")
                 .attr("stroke", this.data.starStroke)
@@ -102,22 +167,77 @@ module powerbi.extensibility.visual {
                 .attr("transform", "translate(" + translateX + ")");
         }
 
+        private addHeart(percentFull: number, index: number, svg: d3.Selection<SVGElement>, strokeOnly?: boolean, translateXOveride?: number): void {
+            let fill = percentFull === 0 ? this.data.emptyStarFill : this.data.starFill,
+                strokeWidth = this.data.showStroke ? 2 : 0,
+                translateX = translateXOveride !== undefined ? 0 : this.getTranslateXFromIndex(index);
+
+            fill = strokeOnly ? "none" : fill;
+
+            svg.append("path")
+                .attr("stroke", this.data.starStroke)
+                .attr("stroke-width", strokeWidth)
+                .attr("fill", fill)
+                .attr("d", Stars.heartPathPoints)
+                .attr("transform", "translate(" + translateX + ")");
+        }
+
+        private addThumbsup(percentFull: number, index: number, svg: d3.Selection<SVGElement>, strokeOnly?: boolean, translateXOveride?: number): void {
+            let fill = percentFull === 0 ? this.data.emptyStarFill : this.data.starFill,
+                strokeWidth = this.data.showStroke ? 2 : 0,
+                translateX = translateXOveride !== undefined ? 0 : this.getTranslateXFromIndex(index);
+
+            fill = strokeOnly ? "none" : fill;
+
+            svg.append("path")
+                .attr("stroke", this.data.starStroke)
+                .attr("stroke-width", strokeWidth)
+                .attr("fill", fill)
+                .attr("d", Stars.thumbsupPathPoints)
+                .attr("transform", "translate(" + translateX + ")");
+        }
+
+        private addSymbol(percentFull: number, index: number, svg: d3.Selection<SVGElement>, strokeOnly?: boolean, translateXOveride?: number): void {
+           switch (this.data.visualSymbol) {
+                case "star":
+                    this.addStar(percentFull, index, svg, strokeOnly, translateXOveride);
+                    break;
+
+                case "dollarsign":
+                    this.addDollarSign(percentFull, index, svg, strokeOnly, translateXOveride);
+                    break;
+
+                case "heart":
+                    this.addHeart(percentFull, index, svg, strokeOnly, translateXOveride);
+                    break;
+
+                case "thumbsup":
+                    this.addThumbsup(percentFull, index, svg, strokeOnly, translateXOveride);
+                    break;
+
+                default:
+                    this.addStar(percentFull, index, svg, strokeOnly, translateXOveride);
+            }
+        }
+
         private addLabel(svg: d3.Selection<SVGElement>): void {
             // let textValue = Stars.starLabelFormater.format(this.data.value),
             let text = svg.append("text")
                         .attr("stroke", this.data.starFill)
                         .attr("fill", this.data.starFill)
                         .attr("font-family", "wf_segoe-ui_normal, Arial, sans-serif")
-                        .attr("font-size", (Stars.internalViewBoxStarHeight / 2) + "px")
+                        .attr("font-size", (Stars.internalSymbolHeight / 2) + "px")
                         .text(this.data.valueLabel)
-                        .attr("transform", "translate(0," + ((Stars.internalViewBoxStarHeight * 2) / 3) + ")");
+                        .attr("transform", "translate(0," + ((Stars.internalSymbolHeight * 2) / 3) + ")");
 
-            let paddingRight = (0.025 * this.options.viewport.width) <= 20 ? (0.028 * this.options.viewport.width) : 20;
+            // let paddingRight = (0.025 * this.options.viewport.width) <= 20 ? (0.028 * this.options.viewport.width) : 20;
+            let paddingRight = this.currentSymbolMarginRight * 2;
             this.labelWidth = (text.node() as any).getBBox().width + paddingRight;
         }
 
         private redraw(): void {
             this.element.empty();
+            this.setSymbolProps(this.data.visualSymbol);
 
             let svg = d3.select(this.element.get(0)).append("svg")
                 .attr("width", this.options.viewport.width)
@@ -135,12 +255,22 @@ module powerbi.extensibility.visual {
                     .append("path")
                         .attr("d", Stars.dollarSignPathPoints);
 
+                defs.append("svg:clipPath")
+                    .attr("id", "heartClipPath")
+                    .append("path")
+                        .attr("d", Stars.heartPathPoints);
+
+                defs.append("svg:clipPath")
+                    .attr("id", "thumbsUpClipPath")
+                    .append("path")
+                        .attr("d", Stars.thumbsupPathPoints);
+
             if (this.data.showLabel) {
                 this.addLabel(svg);
             }
 
             // wait till after we determine label width before setting viewbox
-            svg.attr("viewBox", "0 0 " + this.getTranslateXFromIndex(this.data.numStars) + " " + Stars.internalViewBoxStarHeight);
+            svg.attr("viewBox", "0 0 " + this.getTranslateXFromIndex(this.data.numStars) + " " + Stars.internalSymbolHeight);
 
             for (let i = 0; i < this.data.numStars; i++) {
                 let percentFull = 0;
@@ -154,31 +284,41 @@ module powerbi.extensibility.visual {
 
                 // if percent is full or empty, we draw one star
                 if (percentFull === 1 || percentFull === 0) {
-                    this.addStar(percentFull, i, svg);
+                    this.addSymbol(percentFull, i, svg);
                 }
                 else {
                     // for a partial star we draw a full star and then cover up a part of it with a rectangle on top. 
                     // the rectangle is placed in a group that has a clipping mask to the shape of the star
                     // we then add an empty star on top of that so that the star stroke can still be seen 
                     let partialStarGroup = svg.append("g")
-                        .attr("clip-path", "url(" + window.location.href + "#dollarSignClipPath)")
+                        .attr("clip-path", "url(" + window.location.href + this.currentClipPath + ")")
                         .attr("transform", "translate(" + this.getTranslateXFromIndex(i) + ")");
 
                     // add base star to clipping path group to insure that it doesn"t show from underneath the rect
                     // index of 0 so that
-                    this.addStar(1, 0, partialStarGroup, false, 0);
+                    this.addSymbol(1, 0, partialStarGroup, false, 0);
 
-                    let rectWidth = ((1 - percentFull) * Stars.internalViewBoxStarWidth);
+                    let rectWidth = ((1 - percentFull) * this.currentSymbolWidth);
                     partialStarGroup.append("rect")
-                        .attr("height", Stars.internalViewBoxStarHeight)
+                        .attr("height", Stars.internalSymbolHeight)
                         .attr("width", rectWidth)
                         .attr("fill", this.data.emptyStarFill)
-                        .attr("transform", "translate(" + (Stars.internalViewBoxStarWidth - rectWidth) + ")");
+                        .attr("transform", "translate(" + (this.currentSymbolWidth - rectWidth) + ")");
 
                     if (this.data.showStroke) {
                         this.addStar(1, i, svg, true);
                     }
                 }
+            }
+
+            if (this.data.target) {
+                svg.append("g")
+                    .attr("class", "target-line-group")
+                    .attr("transform", "translate(" + this.getTranslateXFromIndex(this.data.target) + ")")
+                    .append("rect")
+                        .attr("fill", "#666666")
+                        .attr("width", "2")
+                        .attr("height", Stars.internalSymbolHeight);
             }
         }
 
@@ -208,8 +348,9 @@ module powerbi.extensibility.visual {
         public static converter(dataView: DataView): StarsData {
             let data = <StarsData> {};
 
-            if (dataView && dataView.categorical && dataView.categorical.values && dataView.metadata && dataView.metadata.columns) {
+            if (dataView && dataView.categorical && dataView.metadata && dataView.metadata.columns) {
                 data.value = Number(dataView.categorical.values[0].values[0]);
+                data.target = Number(dataView.categorical.values[1].values[0]);
             }
             else {
                 data.value = Stars.defaultValues.value;
@@ -221,6 +362,7 @@ module powerbi.extensibility.visual {
             data.starStroke = Stars.getStarStroke(dataView).solid.color;
             data.starFill = Stars.getStarFill(dataView).solid.color;
             data.emptyStarFill = Stars.getEmptyStarFill(dataView).solid.color;
+            data.visualSymbol = Stars.getVisualSymbol(dataView);
 
             let formatString = dataView.metadata.columns[0].format;
             let formatSymbol = this.getFormatSymbol(formatString);
@@ -289,6 +431,11 @@ module powerbi.extensibility.visual {
             return propertyValue;
         }
 
+        private static getVisualSymbol(dataView: DataView): string {
+            let visualSymbol = dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.visualSymbol, Stars.defaultValues.visualSymbol);
+            return visualSymbol;
+        }
+
         private static getNumStars(dataView: DataView): number {
             let numStars = dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.numStars, Stars.defaultValues.numStars);
 
@@ -325,12 +472,13 @@ module powerbi.extensibility.visual {
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
             let instances: VisualObjectInstance[] = [];
             switch (options.objectName) {
-                case "general":
+                case "starproperties":
                     let general: VisualObjectInstance = {
-                        objectName: "general",
-                        displayName: "General",
+                        objectName: "starproperties",
+                        displayName: "Star Properties",
                         selector: null,
                         properties: {
+                            visualSymbol: Stars.getVisualSymbol(this.dataView),
                             numStars: Stars.getNumStars(this.dataView),
                             showLabel: Stars.getShowLabel(this.dataView),
                             showStroke: Stars.getShowStroke(this.dataView),
