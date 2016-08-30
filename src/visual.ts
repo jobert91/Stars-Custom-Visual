@@ -26,7 +26,13 @@ module powerbi.extensibility.visual {
 
     export interface StarsData {
         value: number;
+        min: number;
+        max: number;
+        target: number;
         valueLabel: string;
+        minLabel: string;
+        maxLabel: string;
+        targetLabel: string;
         numStars: number;
         showLabel: boolean;
         showStroke: boolean;
@@ -37,7 +43,6 @@ module powerbi.extensibility.visual {
         valueWithSymbol: boolean;
         valueSymbol: string;
         visualSymbol: string;
-        target: number;
     };
 
     export class Stars implements IVisual {
@@ -66,8 +71,10 @@ module powerbi.extensibility.visual {
 
         private static defaultValues = {
             visualSymbol: "star",
-            target: undefined,
             value: 0,
+            target: undefined,
+            min: undefined,
+            max: undefined,
             numStars: 5,
             showLabel: true,
             showStroke: false,
@@ -102,6 +109,23 @@ module powerbi.extensibility.visual {
 
         private getTranslateXFromIndex(index: number): number {
             return (index * (this.currentSymbolWidth + this.currentSymbolMarginRight)) + this.labelWidth;
+        }
+
+        private getTargetTranslateX(target: number): number {
+            let remainder = Number((target % 1).toFixed(2));
+            let numFullStarsInTarget = target - remainder;
+
+            // if target is whole number, center target line between stars
+            if (remainder === 0) {
+                return (numFullStarsInTarget * (this.currentSymbolWidth + this.currentSymbolMarginRight))
+                        + (-this.currentSymbolMarginRight / 2)
+                        + this.labelWidth;
+            }
+            else {
+                return (numFullStarsInTarget * (this.currentSymbolWidth + this.currentSymbolMarginRight))
+                        + (remainder * this.currentSymbolWidth)
+                        + this.labelWidth;
+            }
         }
 
         private setSymbolProps(symbol: string): void {
@@ -235,6 +259,28 @@ module powerbi.extensibility.visual {
             this.labelWidth = (text.node() as any).getBBox().width + paddingRight;
         }
 
+        private addClipPathDefs(defs: d3.Selection<SVGElement>): void {
+             defs.append("svg:clipPath")
+                .attr("id", "starClipPath")
+                .append("polygon")
+                    .attr("points", Stars.starPolygonPoints);
+
+            defs.append("svg:clipPath")
+                .attr("id", "dollarSignClipPath")
+                .append("path")
+                    .attr("d", Stars.dollarSignPathPoints);
+
+            defs.append("svg:clipPath")
+                .attr("id", "heartClipPath")
+                .append("path")
+                    .attr("d", Stars.heartPathPoints);
+
+            defs.append("svg:clipPath")
+                .attr("id", "thumbsUpClipPath")
+                .append("path")
+                    .attr("d", Stars.thumbsupPathPoints);
+        }
+
         private redraw(): void {
             this.element.empty();
             this.setSymbolProps(this.data.visualSymbol);
@@ -243,35 +289,57 @@ module powerbi.extensibility.visual {
                 .attr("width", this.options.viewport.width)
                 .attr("height", this.options.viewport.height);
 
+            let viewBoxHeight = Stars.internalSymbolHeight;
+            let starsAndLabelOffsetY = 0;
+            if (this.data.min !== undefined || this.data.max !== undefined) {
+                viewBoxHeight += 20;
+            }
+            if (this.data.target !== undefined) {
+                viewBoxHeight += 32;
+                starsAndLabelOffsetY += 28;
+            }
+
+            let starsAndLabelGroup = svg.append("g").attr("transform", "translate(0," + starsAndLabelOffsetY + ")");
             let defs = svg.append("defs");
-
-                defs.append("svg:clipPath")
-                    .attr("id", "starClipPath")
-                    .append("polygon")
-                        .attr("points", Stars.starPolygonPoints);
-
-                defs.append("svg:clipPath")
-                    .attr("id", "dollarSignClipPath")
-                    .append("path")
-                        .attr("d", Stars.dollarSignPathPoints);
-
-                defs.append("svg:clipPath")
-                    .attr("id", "heartClipPath")
-                    .append("path")
-                        .attr("d", Stars.heartPathPoints);
-
-                defs.append("svg:clipPath")
-                    .attr("id", "thumbsUpClipPath")
-                    .append("path")
-                        .attr("d", Stars.thumbsupPathPoints);
+            this.addClipPathDefs(defs);
 
             if (this.data.showLabel) {
-                this.addLabel(svg);
+                this.addLabel(starsAndLabelGroup);
             }
 
             // wait till after we determine label width before setting viewbox
-            svg.attr("viewBox", "0 0 " + this.getTranslateXFromIndex(this.data.numStars) + " " + Stars.internalSymbolHeight);
+            svg.attr("viewBox", "0 0 " + this.getTranslateXFromIndex(this.data.numStars) + " " + viewBoxHeight);
 
+            // draw min and max
+            if (this.data.min || this.data.max) {
+                // min
+                let minLabel = svg.append("text")
+                    .attr("stroke", "#666666")
+                    .attr("fill", "#666666")
+                    .attr("font-family", "wf_segoe-ui_normal, Arial, sans-serif")
+                    .attr("font-size", "24px")
+                    .text(this.data.minLabel);
+
+                // center text over line
+                let minLabelWidth = (minLabel.node() as any).getBBox().width;
+                let minLabelX = this.getTargetTranslateX(0) + 2;
+                minLabel.attr("transform", "translate(" + minLabelX + ", " + (viewBoxHeight) + " )");
+
+                // max
+                let maxLabel = svg.append("text")
+                    .attr("stroke", "#666666")
+                    .attr("fill", "#666666")
+                    .attr("font-family", "wf_segoe-ui_normal, Arial, sans-serif")
+                    .attr("font-size", "24px")
+                    .text(this.data.maxLabel);
+
+                // center text over line
+                let maxLabelWidth = (maxLabel.node() as any).getBBox().width;
+                let maxLabelX = this.getTargetTranslateX(this.data.numStars - 1) + this.currentSymbolWidth - maxLabelWidth;
+                maxLabel.attr("transform", "translate(" + maxLabelX + ", " + (viewBoxHeight) + " )");
+            }
+
+            // draw symbols
             for (let i = 0; i < this.data.numStars; i++) {
                 let percentFull = 0;
 
@@ -284,13 +352,13 @@ module powerbi.extensibility.visual {
 
                 // if percent is full or empty, we draw one star
                 if (percentFull === 1 || percentFull === 0) {
-                    this.addSymbol(percentFull, i, svg);
+                    this.addSymbol(percentFull, i, starsAndLabelGroup);
                 }
                 else {
                     // for a partial star we draw a full star and then cover up a part of it with a rectangle on top. 
                     // the rectangle is placed in a group that has a clipping mask to the shape of the star
                     // we then add an empty star on top of that so that the star stroke can still be seen 
-                    let partialStarGroup = svg.append("g")
+                    let partialStarGroup = starsAndLabelGroup.append("g")
                         .attr("clip-path", "url(" + window.location.href + this.currentClipPath + ")")
                         .attr("transform", "translate(" + this.getTranslateXFromIndex(i) + ")");
 
@@ -306,19 +374,33 @@ module powerbi.extensibility.visual {
                         .attr("transform", "translate(" + (this.currentSymbolWidth - rectWidth) + ")");
 
                     if (this.data.showStroke) {
-                        this.addStar(1, i, svg, true);
+                        this.addSymbol(1, i, starsAndLabelGroup, true);
                     }
                 }
             }
 
+            // draw target line
             if (this.data.target) {
-                svg.append("g")
+                let targetGroup = svg.append("g")
                     .attr("class", "target-line-group")
-                    .attr("transform", "translate(" + this.getTranslateXFromIndex(this.data.target) + ")")
-                    .append("rect")
-                        .attr("fill", "#666666")
-                        .attr("width", "2")
-                        .attr("height", Stars.internalSymbolHeight);
+                    .attr("transform", "translate(" + this.getTargetTranslateX(this.data.target) + ")");
+
+                targetGroup.append("rect")
+                    .attr("fill", "#666666")
+                    .attr("transform", "translate(-1, 24)")
+                    .attr("width", "2")
+                    .attr("height", Stars.internalSymbolHeight + 8);
+
+                let targetLabel = targetGroup.append("text")
+                    .attr("stroke", "#666666")
+                    .attr("fill", "#666666")
+                    .attr("font-family", "wf_segoe-ui_normal, Arial, sans-serif")
+                    .attr("font-size", "24px")
+                    .text(this.data.targetLabel);
+
+                // center text over line
+                let targetLabelWidth = (targetLabel.node() as any).getBBox().width;
+                targetLabel.attr("transform", "translate(" + (-targetLabelWidth / 2) + ", 18)");
             }
         }
 
@@ -347,13 +429,36 @@ module powerbi.extensibility.visual {
         // Convert a DataView into a view model
         public static converter(dataView: DataView): StarsData {
             let data = <StarsData> {};
+            let valueFormatSymbol = "";
+            let minFormatSymbol = "";
+            let maxFormatSymbol = "";
+            let targetFormatSymbol = "";
 
-            if (dataView && dataView.categorical && dataView.metadata && dataView.metadata.columns) {
-                data.value = Number(dataView.categorical.values[0].values[0]);
-                data.target = Number(dataView.categorical.values[1].values[0]);
+            if (dataView && dataView.categorical && dataView.categorical.values && dataView.metadata && dataView.metadata.columns) {
+                dataView.categorical.values.forEach((val) => {
+                    if (val.source.roles["value"]) {
+                        data.value = val.values[0];
+                        valueFormatSymbol = this.getFormatSymbol(val.source.format);
+                    }
+                    else if (val.source.roles["min"]) {
+                        data.min = val.values[0];
+                        minFormatSymbol = this.getFormatSymbol(val.source.format);
+                    }
+                    else if (val.source.roles["max"]) {
+                        data.max = val.values[0];
+                        maxFormatSymbol = this.getFormatSymbol(val.source.format);
+                    }
+                    else if (val.source.roles["target"]) {
+                        data.target = val.values[0];
+                        targetFormatSymbol = this.getFormatSymbol(val.source.format);
+                    }
+                });
             }
             else {
                 data.value = Stars.defaultValues.value;
+                data.min = undefined;
+                data.max = undefined;
+                data.target = undefined;
             }
 
             data.numStars = Stars.getNumStars(dataView);
@@ -363,24 +468,52 @@ module powerbi.extensibility.visual {
             data.starFill = Stars.getStarFill(dataView).solid.color;
             data.emptyStarFill = Stars.getEmptyStarFill(dataView).solid.color;
             data.visualSymbol = Stars.getVisualSymbol(dataView);
+            data.valueAsPercent = valueFormatSymbol === "%" ? true : false;
+            data.valueWithSymbol = valueFormatSymbol && !data.valueAsPercent ? true : false;
 
-            let formatString = dataView.metadata.columns[0].format;
-            let formatSymbol = this.getFormatSymbol(formatString);
-
-            data.valueAsPercent = formatSymbol === "%" ? true : false;
-            data.valueWithSymbol = formatSymbol && !data.valueAsPercent ? true : false;
+            let min = data.min || 0;
+            let max = data.max || data.numStars;
 
             if (data.valueAsPercent) {
+                max = data.max || 1;
+
                 data.valueLabel = (data.value * 100)  + "%";
-                data.value = data.numStars * data.value;
+                data.minLabel = (min * 100)  + "%";
+                data.maxLabel = (max * 100)  + "%";
+                data.targetLabel = (data.target * 100)  + "%";
+
+                // data.value = data.value - min + (1 - max);
+                // data.value = data.numStars * data.value;
+                // data.target = data.numStars * data.target;
             }
             else if (data.valueWithSymbol) {
-                data.valueSymbol = formatSymbol;
+                data.valueSymbol = valueFormatSymbol;
                 data.valueLabel = data.valueSymbol + data.value;
+                data.targetLabel = data.valueSymbol + data.target;
+                data.minLabel = String(min);
+                data.maxLabel = String(max);
             }
             else {
                 data.value = Number(data.value.toFixed(1));
                 data.valueLabel = String(data.value);
+
+                data.minLabel = String(min);
+                data.maxLabel = String(max);
+
+                if (data.target) {
+                    data.target = Number(data.target.toFixed(1));
+                    data.targetLabel = String(data.target);
+                }
+            }
+
+            let rangeSize = max - min;
+            let scale = data.numStars / rangeSize;
+            console.log(scale);
+
+            data.value = (data.value * scale) - (min * scale);
+
+            if (data.target) {
+                data.target = (data.target * scale) - (min * scale);
             }
 
             return data;
