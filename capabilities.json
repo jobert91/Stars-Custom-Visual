@@ -24,10 +24,12 @@
     "dataViewMappings": [
         {
             "conditions": [
-                { "value":  { "min": 1, "max": 1 } },
-                { "min": { "max": 1 } },
-                { "max": { "max": 1 } },
-                { "target": { "max": 1 } }
+                { 
+                    "value": { "max": 1 }, 
+                    "min": { "max": 1 }, 
+                    "max": { "max": 1 }, 
+                    "target": { "max": 1 } 
+                }
             ],
             "categorical": {
                 "values": {
@@ -45,15 +47,15 @@
         "starproperties": {
             "displayName": "Star Properties",
             "properties": {
-                "symbol": {
+                "visualSymbol": {
                     "displayName": "Symbol",
                     "type": { 
                         "enumeration":  [ 
                             { "value": "star",          "displayName": "Star" }, 
+                            { "value": "dollarsign",    "displayName": "Dollar Sign" },
                             { "value": "heart",         "displayName": "Heart" }, 
                             { "value": "thumbsup",      "displayName": "Thumbs Up" }, 
                             { "value": "smiley",        "displayName": "Smiley" }, 
-                            { "value": "dollarsign",    "displayName": "Dollar Sign" }, 
                             { "value": "calendar",      "displayName": "Calendar" }, 
                             { "value": "accessibility", "displayName": "Accessibility" } 
                         ]
@@ -78,7 +80,12 @@
                 "showStroke": {
                     "displayName": "Show Stroke",
                     "type": { "bool": true }
-                },
+                }
+            }
+        },
+        "starcolors": {
+            "displayName": "Star Colors",
+            "properties": {
                 "starStroke": {
                     "displayName": "Star Stroke",
                     "type": { "fill": { "solid": { "color": true } } }
@@ -99,7 +106,6 @@
                     "displayName": "Min/Max Color",
                     "type": { "fill": { "solid": { "color": true } } }
                 }
-
             }
         }
     }
