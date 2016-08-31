@@ -43,7 +43,16 @@ module powerbi.extensibility.visual {
         valueWithSymbol: boolean;
         valueSymbol: string;
         visualSymbol: string;
+        showTargetLabel: boolean;
+        showMinMaxLabels: boolean;
+        minMaxColor: string;
+        targetColor: string;
     };
+
+    export interface ISymbolColorConfig {
+        fill: string;
+        stroke: string;
+    }
 
     export class Stars implements IVisual {
 
@@ -78,9 +87,27 @@ module powerbi.extensibility.visual {
             numStars: 5,
             showLabel: true,
             showStroke: false,
+            showTargetLabel: true,
+            showMinMaxLabels: true,
+            minMaxColor: "#666666",
+            targetColor: "#666666",
+
+            // default star colors
             starStroke: "#FBB040",
             starFill: "#FBB040",
-            emptyStarFill: "#E6E7E8"
+            emptyStarFill: "#E6E7E8",
+
+            // dollar sign colors
+            dollarSignStroke: "#65bb70",
+            dollarSignFill: "#65bb70",
+
+            // heart colors
+            heartStroke: "#ed2024",
+            heartFill: "#ed2024",
+
+            // thumbs up colors
+            thumbsUpStroke: "#FFF200",
+            thumbsUpFill: "#FFF200",
         };
 
         private static starNumLimits = {
@@ -95,7 +122,11 @@ module powerbi.extensibility.visual {
             showStroke:       { objectName: "starproperties", propertyName: "showStroke" },
             starStroke:       { objectName: "starproperties", propertyName: "starStroke" },
             starFill:         { objectName: "starproperties", propertyName: "starFill" },
-            emptyStarFill:    { objectName: "starproperties", propertyName: "emptyStarFill" }
+            emptyStarFill:    { objectName: "starproperties", propertyName: "emptyStarFill" },
+            showTargetLabel:  { objectName: "starproperties", propertyName: "showTargetLabel" },
+            showMinMaxLabels: { objectName: "starproperties", propertyName: "showMinMaxLabels" },
+            targetColor:      { objectName: "starproperties", propertyName: "targetColor" },
+            minMaxColor:      { objectName: "starproperties", propertyName: "minMaxColor" },
         };
 
         private element: JQuery;
@@ -255,7 +286,7 @@ module powerbi.extensibility.visual {
                         .attr("transform", "translate(0," + ((Stars.internalSymbolHeight * 2) / 3) + ")");
 
             // let paddingRight = (0.025 * this.options.viewport.width) <= 20 ? (0.028 * this.options.viewport.width) : 20;
-            let paddingRight = this.currentSymbolMarginRight * 2;
+            let paddingRight = 16;
             this.labelWidth = (text.node() as any).getBBox().width + paddingRight;
         }
 
@@ -291,12 +322,18 @@ module powerbi.extensibility.visual {
 
             let viewBoxHeight = Stars.internalSymbolHeight;
             let starsAndLabelOffsetY = 0;
-            if (this.data.min !== undefined || this.data.max !== undefined) {
-                viewBoxHeight += 20;
+            if ((this.data.min !== undefined || this.data.max !== undefined) && this.data.showMinMaxLabels) {
+                viewBoxHeight += 24;
             }
             if (this.data.target !== undefined) {
-                viewBoxHeight += 32;
-                starsAndLabelOffsetY += 28;
+                if (this.data.showTargetLabel) {
+                    viewBoxHeight += 32;
+                    starsAndLabelOffsetY += 28;
+                }
+                else {
+                    viewBoxHeight += 8;
+                    starsAndLabelOffsetY += 4;
+                }
             }
 
             let starsAndLabelGroup = svg.append("g").attr("transform", "translate(0," + starsAndLabelOffsetY + ")");
@@ -311,11 +348,11 @@ module powerbi.extensibility.visual {
             svg.attr("viewBox", "0 0 " + this.getTranslateXFromIndex(this.data.numStars) + " " + viewBoxHeight);
 
             // draw min and max
-            if (this.data.min || this.data.max) {
+            if ((this.data.min !== undefined || this.data.max !== undefined) && this.data.showMinMaxLabels) {
                 // min
                 let minLabel = svg.append("text")
-                    .attr("stroke", "#666666")
-                    .attr("fill", "#666666")
+                    .attr("stroke", this.data.minMaxColor)
+                    .attr("fill", this.data.minMaxColor)
                     .attr("font-family", "wf_segoe-ui_normal, Arial, sans-serif")
                     .attr("font-size", "24px")
                     .text(this.data.minLabel);
@@ -323,12 +360,12 @@ module powerbi.extensibility.visual {
                 // center text over line
                 let minLabelWidth = (minLabel.node() as any).getBBox().width;
                 let minLabelX = this.getTargetTranslateX(0) + 2;
-                minLabel.attr("transform", "translate(" + minLabelX + ", " + (viewBoxHeight) + " )");
+                minLabel.attr("transform", "translate(" + minLabelX + ", " + (viewBoxHeight - 2) + " )");
 
                 // max
                 let maxLabel = svg.append("text")
-                    .attr("stroke", "#666666")
-                    .attr("fill", "#666666")
+                    .attr("stroke", this.data.minMaxColor)
+                    .attr("fill", this.data.minMaxColor)
                     .attr("font-family", "wf_segoe-ui_normal, Arial, sans-serif")
                     .attr("font-size", "24px")
                     .text(this.data.maxLabel);
@@ -336,7 +373,7 @@ module powerbi.extensibility.visual {
                 // center text over line
                 let maxLabelWidth = (maxLabel.node() as any).getBBox().width;
                 let maxLabelX = this.getTargetTranslateX(this.data.numStars - 1) + this.currentSymbolWidth - maxLabelWidth;
-                maxLabel.attr("transform", "translate(" + maxLabelX + ", " + (viewBoxHeight) + " )");
+                maxLabel.attr("transform", "translate(" + maxLabelX + ", " + (viewBoxHeight - 2) + " )");
             }
 
             // draw symbols
@@ -384,23 +421,28 @@ module powerbi.extensibility.visual {
                 let targetGroup = svg.append("g")
                     .attr("class", "target-line-group")
                     .attr("transform", "translate(" + this.getTargetTranslateX(this.data.target) + ")");
+                let targetLineOffsetY = 0;
 
-                targetGroup.append("rect")
-                    .attr("fill", "#666666")
-                    .attr("transform", "translate(-1, 24)")
-                    .attr("width", "2")
-                    .attr("height", Stars.internalSymbolHeight + 8);
-
-                let targetLabel = targetGroup.append("text")
-                    .attr("stroke", "#666666")
-                    .attr("fill", "#666666")
+                if (this.data.showTargetLabel) {
+                    let targetLabel = targetGroup.append("text")
+                    .attr("stroke", this.data.targetColor)
+                    .attr("fill", this.data.targetColor)
                     .attr("font-family", "wf_segoe-ui_normal, Arial, sans-serif")
                     .attr("font-size", "24px")
                     .text(this.data.targetLabel);
 
-                // center text over line
-                let targetLabelWidth = (targetLabel.node() as any).getBBox().width;
-                targetLabel.attr("transform", "translate(" + (-targetLabelWidth / 2) + ", 18)");
+                    // center text over line
+                    let targetLabelWidth = (targetLabel.node() as any).getBBox().width;
+                    targetLabel.attr("transform", "translate(" + (-targetLabelWidth / 2) + ", 18)");
+
+                    targetLineOffsetY = 24;
+                }
+
+                targetGroup.append("rect")
+                    .attr("fill", this.data.targetColor)
+                    .attr("transform", "translate(-1," + targetLineOffsetY + ")")
+                    .attr("width", "2")
+                    .attr("height", Stars.internalSymbolHeight + 8);
             }
         }
 
@@ -464,9 +506,14 @@ module powerbi.extensibility.visual {
             data.numStars = Stars.getNumStars(dataView);
             data.showLabel = Stars.getShowLabel(dataView);
             data.showStroke = Stars.getShowStroke(dataView);
+            data.showTargetLabel = Stars.getShowTargetLabel(dataView);
+            data.showMinMaxLabels = Stars.getShowMinMaxLabels(dataView);
             data.starStroke = Stars.getStarStroke(dataView).solid.color;
             data.starFill = Stars.getStarFill(dataView).solid.color;
             data.emptyStarFill = Stars.getEmptyStarFill(dataView).solid.color;
+            data.targetColor = Stars.getTargetColor(dataView).solid.color;
+            data.minMaxColor = Stars.getMinMaxColor(dataView).solid.color;
+
             data.visualSymbol = Stars.getVisualSymbol(dataView);
             data.valueAsPercent = valueFormatSymbol === "%" ? true : false;
             data.valueWithSymbol = valueFormatSymbol && !data.valueAsPercent ? true : false;
@@ -481,10 +528,6 @@ module powerbi.extensibility.visual {
                 data.minLabel = (min * 100)  + "%";
                 data.maxLabel = (max * 100)  + "%";
                 data.targetLabel = (data.target * 100)  + "%";
-
-                // data.value = data.value - min + (1 - max);
-                // data.value = data.numStars * data.value;
-                // data.target = data.numStars * data.target;
             }
             else if (data.valueWithSymbol) {
                 data.valueSymbol = valueFormatSymbol;
@@ -508,7 +551,6 @@ module powerbi.extensibility.visual {
 
             let rangeSize = max - min;
             let scale = data.numStars / rangeSize;
-            console.log(scale);
 
             data.value = (data.value * scale) - (min * scale);
 
@@ -520,7 +562,7 @@ module powerbi.extensibility.visual {
         }
 
         /* One time setup*/
-        constructor(options: VisualInitOptions) {
+        constructor(options: VisualConstructorOptions) {
             this.element = $(options.element);
         }
 
@@ -546,6 +588,40 @@ module powerbi.extensibility.visual {
             this.labelWidth = null;
             this.element = null;
             this.dataView = null;
+        }
+
+        private static getDefaultColors(visualSymbol: string): ISymbolColorConfig {
+
+            let defaultColorConfig = {} as ISymbolColorConfig;
+
+            switch (visualSymbol) {
+                case "star":
+                    defaultColorConfig.fill = Stars.defaultValues.starFill;
+                    defaultColorConfig.stroke = Stars.defaultValues.starStroke;
+                    break;
+
+                case "dollarsign":
+                    defaultColorConfig.fill = Stars.defaultValues.dollarSignFill;
+                    defaultColorConfig.stroke = Stars.defaultValues.dollarSignStroke;
+                    break;
+
+                case "heart":
+                    defaultColorConfig.fill = Stars.defaultValues.heartFill;
+                    defaultColorConfig.stroke = Stars.defaultValues.heartStroke;
+                    break;
+
+                case "thumbsup":
+                    defaultColorConfig.fill = Stars.defaultValues.thumbsUpFill;
+                    defaultColorConfig.stroke = Stars.defaultValues.thumbsUpStroke;
+                    break;
+
+                default:
+                    defaultColorConfig.fill = Stars.defaultValues.starFill;
+                    defaultColorConfig.stroke = Stars.defaultValues.starStroke;
+                    break;
+            }
+
+            return defaultColorConfig;
         }
 
         private static getValue<T>(objects: DataViewObjects, property: any, defaultValue?: T): T {
@@ -586,20 +662,40 @@ module powerbi.extensibility.visual {
             return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.showLabel, Stars.defaultValues.showLabel);
         }
 
+        private static getShowTargetLabel(dataView: DataView): boolean {
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.showTargetLabel, Stars.defaultValues.showTargetLabel);
+        }
+
+        private static getShowMinMaxLabels(dataView: DataView): boolean {
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.showMinMaxLabels, Stars.defaultValues.showMinMaxLabels);
+        }
+
         private static getShowStroke(dataView: DataView): boolean {
             return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.showStroke, Stars.defaultValues.showStroke);
         }
 
         private static getStarStroke(dataView: DataView): Fill {
-            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.starStroke, { solid: { color: Stars.defaultValues.starStroke } });
+            let visualSymbol = Stars.getVisualSymbol(dataView);
+            let defaultColorConfig = Stars.getDefaultColors(visualSymbol);
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.starStroke, { solid: { color: defaultColorConfig.stroke } });
         }
 
         private static getStarFill(dataView: DataView): Fill {
-            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.starFill, { solid: { color: Stars.defaultValues.starFill } });
+            let visualSymbol = Stars.getVisualSymbol(dataView);
+            let defaultColorConfig = Stars.getDefaultColors(visualSymbol);
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.starFill, { solid: { color: defaultColorConfig.fill } });
         }
 
         private static getEmptyStarFill(dataView: DataView): Fill {
             return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.emptyStarFill, { solid: { color: Stars.defaultValues.emptyStarFill } });
+        }
+
+        private static getTargetColor(dataView: DataView): Fill {
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.targetColor, { solid: { color: Stars.defaultValues.targetColor } });
+        }
+
+        private static getMinMaxColor(dataView: DataView): Fill {
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.minMaxColor, { solid: { color: Stars.defaultValues.minMaxColor } });
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
@@ -615,9 +711,13 @@ module powerbi.extensibility.visual {
                             numStars: Stars.getNumStars(this.dataView),
                             showLabel: Stars.getShowLabel(this.dataView),
                             showStroke: Stars.getShowStroke(this.dataView),
+                            showTargetLabel: Stars.getShowTargetLabel(this.dataView),
+                            showMinMaxLabels: Stars.getShowMinMaxLabels(this.dataView),
                             starStroke: Stars.getStarStroke(this.dataView),
                             starFill: Stars.getStarFill(this.dataView),
-                            emptyStarFill: Stars.getEmptyStarFill(this.dataView)
+                            emptyStarFill: Stars.getEmptyStarFill(this.dataView),
+                            targetColor: Stars.getTargetColor(this.dataView),
+                            minMaxColor: Stars.getMinMaxColor(this.dataView)
                         }
                     };
                     instances.push(general);

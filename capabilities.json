@@ -48,17 +48,15 @@
                 "symbol": {
                     "displayName": "Symbol",
                     "type": { 
-                        "enumeration": {
-                            "members": [ 
-                                { "value": "star", "displayName": "Star" }, 
-                                { "value": "heart", "displayName": "Heart" }, 
-                                { "value": "thumbsup", "displayName": "Thumbs Up" }, 
-                                { "value": "smiley", "displayName": "Smiley" }, 
-                                { "value": "dollarsign", "displayName": "Dollar Sign" }, 
-                                { "value": "calendar", "displayName": "Calendar" }, 
-                                { "value": "accessibility", "displayName": "Accessibility" } 
-                            ]
-                        }
+                        "enumeration":  [ 
+                            { "value": "star",          "displayName": "Star" }, 
+                            { "value": "heart",         "displayName": "Heart" }, 
+                            { "value": "thumbsup",      "displayName": "Thumbs Up" }, 
+                            { "value": "smiley",        "displayName": "Smiley" }, 
+                            { "value": "dollarsign",    "displayName": "Dollar Sign" }, 
+                            { "value": "calendar",      "displayName": "Calendar" }, 
+                            { "value": "accessibility", "displayName": "Accessibility" } 
+                        ]
                     }
                 },
                 "numStars": {
@@ -68,6 +66,14 @@
                 "showLabel": {
                     "displayName": "Show Label",
                     "type": { "bool": true }
+                },
+                "showTargetLabel": {
+                    "displayName": "Show Target Label",
+                    "type": { "bool": true }  
+                },
+                "showMinMaxLabels": {
+                    "displayName": "Show Min/Max Labels",
+                    "type": { "bool": true }  
                 },
                 "showStroke": {
                     "displayName": "Show Stroke",
@@ -84,7 +90,16 @@
                 "emptyStarFill": {
                     "displayName": "Empty Star Fill",
                     "type": { "fill": { "solid": { "color": true } } }
+                },
+                "targetColor": {
+                    "displayName": "Target Color",
+                    "type": { "fill": { "solid": { "color": true } } }
+                },
+                "minMaxColor": {
+                    "displayName": "Min/Max Color",
+                    "type": { "fill": { "solid": { "color": true } } }
                 }
+
             }
         }
     }
