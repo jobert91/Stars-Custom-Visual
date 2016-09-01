@@ -76,9 +76,23 @@ module powerbi.extensibility.visual {
         private static thumbsupMarginRight = 18;
         private static thumbsupPathPoints = "M28,33.6v44.3c0,1.2-1,1.5-2.5,1.5H2.9c-1.2,0-1.9-0.2-1.9-1.5V33.6c0-1.2,0.6-4.2,1.9-4.2h22.6 C26.8,29.4,28,32.4,28,33.6z M86.2,25.3H73.8H61.3l-0.1-0.1l-0.1-0.1c0,0,1.1-1.3,1.6-4.1s0.3-7-2.4-12.8c-2.7-5.8-6.3-7.4-9.4-7.2 s-5.6,2.2-6.2,3.7C44.1,6.2,44,9.2,44,11.9c0,2.7,0.1,5,0.1,5l-5,8.9l-5,8.9l-2.4,0.9l-2.4,0.9v16.4v16.4c0,0,2.4,1.4,5.4,2.8 c3,1.4,6.6,2.8,9,2.8h1.1h1.1h11.8h11.8h1.8h1.8c0.7,0,2.5,0,4.4-0.6c1.9-0.6,3.8-1.7,4.7-4c0.9-2.3,3.2-10.8,5.3-18.8 c2.1-7.9,3.9-15.3,3.9-15.3c0.3-1.5-0.2-4.3-1.2-6.7C89.2,27.4,87.8,25.3,86.2,25.3z";
 
+        // smiley properties
         private static internalSmileyWidth = 80.32;
         private static smileyMarginRight = 18;
         private static smileyPathPoints = "M40.2,0.2c-22.1,0-40,17.9-40,40s17.9,40,40,40s40-17.9,40-40S62.2,0.2,40.2,0.2z M51.8,23.4 c2.3,0,4.2,2.8,4.2,6.3S54.2,36,51.8,36s-4.2-2.8-4.2-6.3S49.5,23.4,51.8,23.4z M28.5,23.4c2.3,0,4.2,2.8,4.2,6.3S30.8,36,28.5,36 s-4.2-2.8-4.2-6.3S26.2,23.4,28.5,23.4z M61,55.5c-5.7,5.7-13.3,8.6-20.8,8.6s-15.1-2.9-20.8-8.6c-0.8-0.8-0.8-2.2,0-3 c0.8-0.8,2.2-0.8,3,0c9.9,9.9,25.9,9.8,35.7,0c0.8-0.8,2.2-0.8,3,0C61.8,53.4,61.8,54.7,61,55.5z";
+
+        // accessbility symbol properties
+        private static internalAccessbilityWidth = 74.25;
+        private static accessbilityMarginRight = 12;
+        private static accessbilityPathPoints1 = "M48.1,57.6c-2.8,8.2-10.5,13.8-19.2,13.8c-11.2,0-20.2-9.1-20.2-20.2c0-6.4,3-12.3,8-16.1l0-9.2C7,30.5,0.8,40.3,0.8,51.2 c0,15.5,12.6,28.2,28.2,28.2c9.1,0,17.6-4.4,22.9-11.7L48.1,57.6z";
+        private static accessbilityPathPoints2 = "M69.3,59.9L69.3,59.9c-0.6-2.1-2.9-3.2-5-2.6l-1.9,0.6L55,38H30.1v-4.8h11.4c2.2,0,4-1.8,4-4s-1.8-4-4-4H30.1v-9.8 c3.1-0.9,5.2-3.7,5.2-7.1C35.3,4.3,32,1,27.9,1c-4.1,0-7.4,3.3-7.4,7.4c0,1.7,0.6,3.3,1.6,4.6v33h27.3l8.2,21.7l9-2.8 C68.8,64.2,69.9,62,69.3,59.9z";
+
+        // calendar properties
+        private static internalCalendarWidth = 80;
+        private static calendarMarginRight = 18;
+        private static calendarPathPoints1 = "M60.1,20.4c1.8,0,3.3-1.5,3.3-3.3V5.3c0-1.8-1.5-3.3-3.3-3.3c-1.8,0-3.3,1.5-3.3,3.3v11.8C56.8,18.9,58.3,20.4,60.1,20.4z";
+        private static calendarPathPoints2 = "M20.5,20.4c1.8,0,3.3-1.5,3.3-3.3V5.3c0-1.8-1.5-3.3-3.3-3.3c-1.8,0-3.3,1.5-3.3,3.3v11.8C17.2,18.9,18.7,20.4,20.5,20.4z";
+        private static calendarPathPoints3 = "M66.7,8.1v3.5c0,1.8,0,3,0,4.9c0,3.6-3,6.6-6.6,6.6c-3.6,0-6.6-3-6.6-6.6c0-2,0-3,0-4.9V8.1H27.2v3.5c0,2.1,0,3,0,4.9 c0,3.6-3,6.6-6.6,6.6c-3.6,0-6.6-3-6.6-6.6c0-2,0-2.9,0-4.9V8.1H1.5v70.2h77.1V8.1H66.7z M21.9,65.2h-7.9v-7.9h7.9V65.2z M21.9,54.6h-7.9v-7.9h7.9V54.6z M33,65.2h-7.9v-7.9H33V65.2z M33,54.6h-7.9v-7.9H33V54.6z M33,44h-7.9V36H33V44z M44.2,65.2h-7.9 v-7.9h7.9V65.2z M44.2,54.6h-7.9v-7.9h7.9V54.6z M44.2,44h-7.9V36h7.9V44z M55.3,65.2h-7.9v-7.9h7.9V65.2z M55.3,54.6h-7.9v-7.9 h7.9V54.6z M55.3,44h-7.9V36h7.9V44z M66.5,54.6h-7.9v-7.9h7.9V54.6z M66.5,44h-7.9V36h7.9V44z M66.5,30.4H13.9v-1.9h52.5V30.4z";
 
         private static internalSymbolHeight = 80.32;
 
@@ -115,7 +129,15 @@ module powerbi.extensibility.visual {
 
             // smiley colors
             smileyStroke: "#FCD116",
-            smileyFill: "#FCD116"
+            smileyFill: "#FCD116",
+
+            // accessibility colors
+            accessibilityStroke: "#3399ff",
+            accessibilityFill: "#3399ff",
+
+            // calendar colors
+            calendarStroke: "#FBB040",
+            calendarFill: "#FBB040"
         };
 
         private static starNumLimits = {
@@ -197,6 +219,18 @@ module powerbi.extensibility.visual {
                     this.currentSymbolWidth = Stars.internalSmileyWidth;
                     this.currentSymbolMarginRight = Stars.smileyMarginRight;
                     this.currentClipPath = "#smileyClipPath";
+                    break;
+
+                case "accessibility":
+                    this.currentSymbolWidth = Stars.internalAccessbilityWidth;
+                    this.currentSymbolMarginRight = Stars.accessbilityMarginRight;
+                    this.currentClipPath = "#accesssibilityClipPath";
+                    break;
+
+                case "calendar":
+                    this.currentSymbolWidth = Stars.internalCalendarWidth;
+                    this.currentSymbolMarginRight = Stars.calendarMarginRight;
+                    this.currentClipPath = "#calendarClipPath";
                     break;
 
                 default:
@@ -281,6 +315,57 @@ module powerbi.extensibility.visual {
                 .attr("transform", "translate(" + translateX + ")");
         }
 
+        private addAccessibility(percentFull: number, index: number, svg: d3.Selection<SVGElement>, strokeOnly?: boolean, translateXOveride?: number): void {
+            let fill = percentFull === 0 ? this.data.emptyStarFill : this.data.starFill,
+                strokeWidth = this.data.showStroke ? 2 : 0,
+                translateX = translateXOveride !== undefined ? 0 : this.getTranslateXFromIndex(index);
+
+            fill = strokeOnly ? "none" : fill;
+
+            svg.append("path")
+                .attr("stroke", this.data.starStroke)
+                .attr("stroke-width", strokeWidth)
+                .attr("fill", fill)
+                .attr("d", Stars.accessbilityPathPoints1)
+                .attr("transform", "translate(" + translateX + ")");
+
+            svg.append("path")
+                .attr("stroke", this.data.starStroke)
+                .attr("stroke-width", strokeWidth)
+                .attr("fill", fill)
+                .attr("d", Stars.accessbilityPathPoints2)
+                .attr("transform", "translate(" + translateX + ")");
+        }
+
+        private addCalendar(percentFull: number, index: number, svg: d3.Selection<SVGElement>, strokeOnly?: boolean, translateXOveride?: number): void {
+            let fill = percentFull === 0 ? this.data.emptyStarFill : this.data.starFill,
+                strokeWidth = this.data.showStroke ? 2 : 0,
+                translateX = translateXOveride !== undefined ? 0 : this.getTranslateXFromIndex(index);
+
+            fill = strokeOnly ? "none" : fill;
+
+            svg.append("path")
+                .attr("stroke", this.data.starStroke)
+                .attr("stroke-width", strokeWidth)
+                .attr("fill", fill)
+                .attr("d", Stars.calendarPathPoints1)
+                .attr("transform", "translate(" + translateX + ")");
+
+            svg.append("path")
+                .attr("stroke", this.data.starStroke)
+                .attr("stroke-width", strokeWidth)
+                .attr("fill", fill)
+                .attr("d", Stars.calendarPathPoints2)
+                .attr("transform", "translate(" + translateX + ")");
+
+            svg.append("path")
+                .attr("stroke", this.data.starStroke)
+                .attr("stroke-width", strokeWidth)
+                .attr("fill", fill)
+                .attr("d", Stars.calendarPathPoints3)
+                .attr("transform", "translate(" + translateX + ")");
+        }
+
         private addSymbol(percentFull: number, index: number, svg: d3.Selection<SVGElement>, strokeOnly?: boolean, translateXOveride?: number): void {
            switch (this.data.visualSymbol) {
                 case "star":
@@ -301,6 +386,14 @@ module powerbi.extensibility.visual {
 
                 case "smiley":
                     this.addSmiley(percentFull, index, svg, strokeOnly, translateXOveride);
+                    break;
+
+                case "accessibility":
+                    this.addAccessibility(percentFull, index, svg, strokeOnly, translateXOveride);
+                    break;
+
+                case "calendar":
+                    this.addCalendar(percentFull, index, svg, strokeOnly, translateXOveride);
                     break;
 
                 default:
@@ -348,6 +441,28 @@ module powerbi.extensibility.visual {
                 .attr("id", "smileyClipPath")
                 .append("path")
                     .attr("d", Stars.smileyPathPoints);
+
+            let accessbilityClipPath = defs.append("svg:clipPath")
+                .attr("id", "accesssibilityClipPath");
+
+            accessbilityClipPath.append("path")
+                .attr("d", Stars.accessbilityPathPoints1);
+
+            accessbilityClipPath.append("path")
+                .attr("d", Stars.accessbilityPathPoints2);
+
+            let calendaryClipPath = defs.append("svg:clipPath")
+                .attr("id", "calendarClipPath");
+
+            calendaryClipPath.append("path")
+                .attr("d", Stars.calendarPathPoints1);
+
+            calendaryClipPath.append("path")
+                .attr("d", Stars.calendarPathPoints2);
+
+            calendaryClipPath.append("path")
+                .attr("d", Stars.calendarPathPoints3);
+
         }
 
         private redraw(): void {
@@ -655,6 +770,16 @@ module powerbi.extensibility.visual {
                 case "smiley":
                     defaultColorConfig.fill = Stars.defaultValues.smileyFill;
                     defaultColorConfig.stroke = Stars.defaultValues.smileyStroke;
+                    break;
+
+                case "accessibility":
+                    defaultColorConfig.fill = Stars.defaultValues.accessibilityFill;
+                    defaultColorConfig.stroke = Stars.defaultValues.accessibilityStroke;
+                    break;
+
+                case "calendar":
+                    defaultColorConfig.fill = Stars.defaultValues.calendarFill;
+                    defaultColorConfig.stroke = Stars.defaultValues.calendarStroke;
                     break;
 
                 default:
