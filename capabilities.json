@@ -107,6 +107,23 @@
                     "type": { "fill": { "solid": { "color": true } } }
                 }
             }
+        },
+        "staraxis": {
+            "displayName": "Star Axis",
+            "properties": {
+                "min": {
+                    "displayName": "Minimum",
+                    "type": { "numeric": true }
+                },
+                "max": {
+                    "displayName": "Maximum",
+                    "type": { "numeric": true }
+                },
+                "target": {
+                    "displayName": "Target",
+                    "type": { "numeric": true }
+                }
+            }
         }
     }
 }

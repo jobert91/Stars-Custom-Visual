@@ -157,6 +157,9 @@ module powerbi.extensibility.visual {
             emptyStarFill:    { objectName: "starcolors", propertyName: "emptyStarFill" },
             targetColor:      { objectName: "starcolors", propertyName: "targetColor" },
             minMaxColor:      { objectName: "starcolors", propertyName: "minMaxColor" },
+            min:              { objectName: "staraxis", propertyName: "min" },
+            max:              { objectName: "staraxis", propertyName: "max" },
+            target:           { objectName: "staraxis", propertyName: "target" },
         };
 
         private element: JQuery;
@@ -656,6 +659,17 @@ module powerbi.extensibility.visual {
                 data.target = undefined;
             }
 
+            // if min, max, or target are not defined, check to see if they are set in formatting pane
+            if (!data.min) {
+                data.min = Stars.getFormattingPaneMin(dataView);
+            }
+            if (!data.max) {
+                data.max = Stars.getFormattingPaneMax(dataView);
+            }
+            if (!data.target) {
+                data.target = Stars.getFormattingPaneTarget(dataView);
+            }
+
             data.numStars = Stars.getNumStars(dataView);
             data.showLabel = Stars.getShowLabel(dataView);
             data.showStroke = Stars.getShowStroke(dataView);
@@ -825,6 +839,18 @@ module powerbi.extensibility.visual {
             return numStars;
         }
 
+        private static getFormattingPaneMin(dataView: DataView): number {
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.min, undefined);
+        }
+
+        private static getFormattingPaneMax(dataView: DataView): number {
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.max, undefined);
+        }
+
+        private static getFormattingPaneTarget(dataView: DataView): number {
+            return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.target, undefined);
+        }
+
         private static getShowLabel(dataView: DataView): boolean {
             return dataView.metadata && Stars.getValue(dataView.metadata.objects, Stars.properties.showLabel, Stars.defaultValues.showLabel);
         }
@@ -898,6 +924,19 @@ module powerbi.extensibility.visual {
                         }
                     };
                     instances.push(starColors);
+                    break;
+                case "staraxis":
+                    let staraxis: VisualObjectInstance = {
+                        objectName: "staraxis",
+                        displayName: "Star Axis",
+                        selector: null,
+                        properties: {
+                            min: Stars.getFormattingPaneMin(this.dataView),
+                            max: Stars.getFormattingPaneMax(this.dataView),
+                            target: Stars.getFormattingPaneTarget(this.dataView)
+                        }
+                    };
+                    instances.push(staraxis);
                     break;
             }
             return instances;
