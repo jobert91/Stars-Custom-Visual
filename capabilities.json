@@ -4,22 +4,63 @@
             "displayName": "Value",
             "name": "value",
             "kind": 1
+        },
+        {
+            "displayName": "Minimum value",
+            "name": "min",
+            "kind": 1
+        },
+        {
+            "displayName": "Maximum value",
+            "name": "max",
+            "kind": 1
+        },
+        {
+            "displayName": "Target value",
+            "name": "target",
+            "kind": 1
         }
     ],
     "dataViewMappings": [
         {
             "conditions": [
-                { "value": { "min": 1, "max": 1 } }
+                { 
+                    "value": { "max": 1 }, 
+                    "min": { "max": 1 }, 
+                    "max": { "max": 1 }, 
+                    "target": { "max": 1 } 
+                }
             ],
-            "single": {
-                "role": "value"
+            "categorical": {
+                "values": {
+                    "select":[
+                        { "bind": { "to": "value" } },
+                        { "bind": { "to": "min" } },
+                        { "bind": { "to": "max" } },
+                        { "bind": { "to": "target" } }
+                    ]
+                }
             }
         }
     ],
     "objects": {
-        "general": {
+        "starproperties": {
             "displayName": "Star Properties",
             "properties": {
+                "visualSymbol": {
+                    "displayName": "Symbol",
+                    "type": { 
+                        "enumeration":  [ 
+                            { "value": "star",          "displayName": "Star" }, 
+                            { "value": "dollarsign",    "displayName": "Dollar Sign" },
+                            { "value": "heart",         "displayName": "Heart" }, 
+                            { "value": "thumbsup",      "displayName": "Thumbs Up" }, 
+                            { "value": "smiley",        "displayName": "Smiley" }, 
+                            { "value": "calendar",      "displayName": "Calendar" }, 
+                            { "value": "accessibility", "displayName": "Accessibility" } 
+                        ]
+                    }
+                },
                 "numStars": {
                     "displayName": "Number of Stars",
                     "type": { "numeric": true }
@@ -28,10 +69,23 @@
                     "displayName": "Show Label",
                     "type": { "bool": true }
                 },
+                "showTargetLabel": {
+                    "displayName": "Show Target Label",
+                    "type": { "bool": true }  
+                },
+                "showMinMaxLabels": {
+                    "displayName": "Show Min/Max Labels",
+                    "type": { "bool": true }  
+                },
                 "showStroke": {
                     "displayName": "Show Stroke",
                     "type": { "bool": true }
-                },
+                }
+            }
+        },
+        "starcolors": {
+            "displayName": "Star Colors",
+            "properties": {
                 "starStroke": {
                     "displayName": "Star Stroke",
                     "type": { "fill": { "solid": { "color": true } } }
@@ -42,6 +96,14 @@
                 },
                 "emptyStarFill": {
                     "displayName": "Empty Star Fill",
+                    "type": { "fill": { "solid": { "color": true } } }
+                },
+                "targetColor": {
+                    "displayName": "Target Color",
+                    "type": { "fill": { "solid": { "color": true } } }
+                },
+                "minMaxColor": {
+                    "displayName": "Min/Max Color",
                     "type": { "fill": { "solid": { "color": true } } }
                 }
             }
