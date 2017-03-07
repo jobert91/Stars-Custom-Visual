@@ -704,8 +704,8 @@ module powerbi.extensibility.visual {
                 data.maxLabel = String(max);
             }
             else {
-                data.value = Number(data.value.toFixed(1));
-                data.valueLabel = String(data.value);
+                data.valueLabel = data.value.toFixed(1);
+                data.value = Number(data.valueLabel);
 
                 data.minLabel = String(min);
                 data.maxLabel = String(max);
@@ -736,7 +736,6 @@ module powerbi.extensibility.visual {
         /* Called for data, size, formatting changes*/
         public update(options: VisualUpdateOptions) {
             let dataView = this.dataView = options.dataViews[0];
-            console.log("update");
             if (dataView) {
                 this.data = Stars.converter(dataView);
                 this.options = options;
