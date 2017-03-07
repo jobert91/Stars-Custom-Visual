@@ -635,19 +635,19 @@ module powerbi.extensibility.visual {
             if (dataView && dataView.categorical && dataView.categorical.values && dataView.metadata && dataView.metadata.columns) {
                 dataView.categorical.values.forEach((val) => {
                     if (val.source.roles["value"]) {
-                        data.value = val.values[0];
+                        data.value = Number(val.values[0]);
                         valueFormatSymbol = this.getFormatSymbol(val.source.format);
                     }
                     else if (val.source.roles["min"]) {
-                        data.min = val.values[0];
+                        data.min = Number(val.values[0]);
                         minFormatSymbol = this.getFormatSymbol(val.source.format);
                     }
                     else if (val.source.roles["max"]) {
-                        data.max = val.values[0];
+                        data.max = Number(val.values[0]);
                         maxFormatSymbol = this.getFormatSymbol(val.source.format);
                     }
                     else if (val.source.roles["target"]) {
-                        data.target = val.values[0];
+                        data.target = Number(val.values[0]);
                         targetFormatSymbol = this.getFormatSymbol(val.source.format);
                     }
                 });
@@ -736,7 +736,7 @@ module powerbi.extensibility.visual {
         /* Called for data, size, formatting changes*/
         public update(options: VisualUpdateOptions) {
             let dataView = this.dataView = options.dataViews[0];
-
+            console.log("update");
             if (dataView) {
                 this.data = Stars.converter(dataView);
                 this.options = options;

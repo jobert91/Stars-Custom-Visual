@@ -3,22 +3,22 @@
         {
             "displayName": "Value",
             "name": "value",
-            "kind": 1
+            "kind": "Measure"
         },
         {
             "displayName": "Minimum value",
             "name": "min",
-            "kind": 1
+            "kind": "Measure"
         },
         {
             "displayName": "Maximum value",
             "name": "max",
-            "kind": 1
+            "kind": "Measure"
         },
         {
             "displayName": "Target value",
             "name": "target",
-            "kind": 1
+            "kind": "Measure"
         }
     ],
     "dataViewMappings": [

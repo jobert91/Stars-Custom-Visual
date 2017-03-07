@@ -1,22 +1,22 @@
 {
-    "visual": {
-        "name": "stars",
-        "displayName": "Stars",
-        "guid": "PBI_CV_9053509D_D461_463A_B485_CE9F6AB0F13C",
-        "visualClassName": "Stars",
-        "version": "1.0.3",
-        "description": "Stars custom visual for Microsoft Power BI",
-        "supportUrl": "https://github.com/tisawyer/Stars-Custom-Visual/issues",
-        "gitHubUrl": "https://github.com/tisawyer/Stars-Custom-Visual"
-    },
-    "apiVersion": "1.1.0",
-    "author": {
-        "name": "Tim Sawyer",
-        "email": "tisawyer@microsoft.com"
-    },
-    "assets": {
-        "icon": "assets/icon.png"
-    },
-    "style": "style/visual.less",
-    "capabilities": "capabilities.json"
+  "visual": {
+    "name": "stars",
+    "displayName": "Stars",
+    "guid": "PBI_CV_9053509D_D461_463A_B485_CE9F6AB0F13C",
+    "visualClassName": "Stars",
+    "version": "1.0.4",
+    "description": "Stars custom visual for Microsoft Power BI",
+    "supportUrl": "https://github.com/tisawyer/Stars-Custom-Visual/issues",
+    "gitHubUrl": "https://github.com/tisawyer/Stars-Custom-Visual"
+  },
+  "apiVersion": "1.5.0",
+  "author": {
+    "name": "Tim Sawyer",
+    "email": "tisawyer@microsoft.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json"
 }
